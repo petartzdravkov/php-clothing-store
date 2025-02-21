@@ -1,9 +1,17 @@
-
 <div class="container">
-
+    
     <h3 class="my-4"> Hello, <?=$fname;?>! </h3>
     <hr>
-    <form method="POST" action="/Non-bookstack/shirts_shop/index.php?page=profile">
+    <form method="POST" action="index.php?page=profile" enctype="multipart/form-data">
+	<div class="my-3">
+	    <img style="height: 150px; width: auto;" class="rounded-4" src="<?= isset($users[$current_user_index]['profile_pic']) ? $users[$current_user_index]['profile_pic'] : 'images/default_profile.png'?>" alt="test">
+	    <br>
+	    <label for="profile_pic" class="py-2"> Upload Profile Pic: </label>
+	    <br>
+	    <input type="file" name="profile_pic" accept="image/*" id="profile_pic" class="py-2" />
+	    <p class="text-success"> <?=$uploaded_file;?> </p>
+	</div>
+	<hr>
 	<div class="my-3">
 	    <p> Username: <?= $uname; ?> </p>
 	</div>
@@ -14,14 +22,14 @@
 	</div>
 	<hr>
 	<div class="my-3">
-	    <label class="me-2"> Change Gender: </label>
+	    <span class="me-2"> Change Gender: </span>
 	    <div class="form-check form-check-inline">
-		<input class="form-check-input" type="radio" name="gender_replace" id="male" value="male" <?= $_SESSION['gender'] === "male" ? "checked" : "";?>>
-		<label for="gender_replace" class="form-check-label"> Male </label>
+		<input class="form-check-input" type="radio" name="gender_replace" id="gender_replace_male" value="male" <?= $_SESSION['gender'] === "male" ? "checked" : "";?>>
+		<label for="gender_replace_male" class="form-check-label"> Male </label>
 	    </div>
 	    <div class="form-check form-check-inline">
-		<input  class="form-check-input" type="radio" name="gender_replace" id="female" value="female" <?= $_SESSION['gender'] === "female" ? "checked" : "";?>>
-		<label for="gender_replace" class="form-check-label"> Female </label>
+		<input  class="form-check-input" type="radio" name="gender_replace" id="gender_replace_female" value="female" <?= $_SESSION['gender'] === "female" ? "checked" : "";?>>
+		<label for="gender_replace_female" class="form-check-label"> Female </label>
 	    </div>
 	</div>
 	<hr>
@@ -43,7 +51,7 @@
 		</div>
 		<div class="modal-footer">
 		    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-		    <form method="POST" action="/Non-bookstack/shirts_shop/index.php?page=profile">
+		    <form method="POST" action="index.php?page=profile">
 			<input type="submit" name="delete_account_confirm" class="btn btn-danger" value="Yes, delete my account">
 		    </form>
 		</div>
@@ -54,58 +62,59 @@
 
 
     <!-- Orders -->
-    <?php if(count($users[$current_user_index]["orders"]) != 0){ ?>
-	<h5 class="mt-5"> Orders </h5>
-	<div class="accordion accordion-flush mb-5" id="orders_accordion">
-	    <?php for($i=1; $i<=count($users[$current_user_index]["orders"]); $i++){ ?>
-		<div class="accordion-item">
-		    <h2 class="accordion-header">
-			<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse<?=$i?>">
-			    Order #<?=$i?>
-			</button>
-		    </h2>
-		    <div id="flush-collapse<?=$i?>" class="accordion-collapse collapse" data-bs-parent="#orders_accordion">
-			<div class="accordion-body">
-			    <table class="table table-hover">
-				<tbody>
-				    <tr>
-					<th> Item - Amount</th>
-					<td> <?php
-					     for($j = 0; $j < count($users[$current_user_index]["orders"][$i-1]); $j++){
-						 echo getKeyById("item", $users[$current_user_index]["orders"][$i-1][$j]['id'], $inventory) . " - ";
-						 echo $users[$current_user_index]["orders"][$i-1][$j]['amount'];
-						 if($j != count($users[$current_user_index]["orders"][$i-1]) - 1){
-						     echo ", ";
-						 }
-					     }?>
-					</td>
-				    </tr>
-				    <tr>
-					<th> Date</th>
-					<td> <?=$users[$current_user_index]["orders"][$i-1][0]["date"] . " at "  . $users[$current_user_index]["orders"][$i-1][0]["time"];?></td>
-				    </tr>
-
-				    <tr>
-					<th> Price total </th>
-					<td> <?php
-					     $total = 0;
-					     for($k = 0; $k < count($users[$current_user_index]["orders"][$i-1]); $k++){
-						 $total += ($users[$current_user_index]["orders"][$i-1][$k]['amount'] * getKeyById("price", $users[$current_user_index]["orders"][$i-1][$k]['id'], $inventory));
+    <h5 class="mt-5"> Orders </h5>
+    <div class="accordion accordion-flush mb-5" id="orders_accordion">
+	<?php
+	/* ini_set('display_errors', 1);
+	   ini_set('display_startup_errors', 1);
+	   error_reporting(E_ALL); */
+	for($i=2; $i <= count($users[$current_user_index]["orders"]); $i++){
+	    
+	?>
+	    <div class="accordion-item">
+		<h2 class="accordion-header">
+		    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse<?=$i?>">
+			Order #<?=$i-1?>
+		    </button>
+		</h2>
+		<div id="flush-collapse<?=$i?>" class="accordion-collapse collapse" data-bs-parent="#orders_accordion">
+		    <div class="accordion-body">
+			<table class="table table-hover">
+			    <tbody>
+				<tr>
+				    <th> Item - Amount</th>
+				    <td> <?php
+					 for($j = 0; $j < count($users[$current_user_index]["orders"][$i-1]); $j++){
+					     echo getKeyById("item", $users[$current_user_index]["orders"][$i-1][$j]['id'], $inventory) . " - ";
+					     echo $users[$current_user_index]["orders"][$i-1][$j]['amount'];
+					     if($j != count($users[$current_user_index]["orders"][$i-1]) - 1){
+						 echo ", ";
 					     }
-					     echo $total . " BGN";
-					     ?>
-					</td>
-				    </tr>
-				</tbody>
-			    </table>
-			</div>
+					 }?>
+				    </td>
+				</tr>
+				<tr>
+				    <th> Date</th>
+				    <td> <?=$users[$current_user_index]["orders"][$i-1][0]["date"] . " at "  . $users[$current_user_index]["orders"][$i-1][0]["time"];?></td>
+				</tr>
+
+				<tr>
+				    <th> Price total </th>
+				    <td> <?php
+					 $total = 0;
+					 for($k = 0; $k < count($users[$current_user_index]["orders"][$i-1]); $k++){
+					     $total += ($users[$current_user_index]["orders"][$i-1][$k]['amount'] * getKeyById("price", $users[$current_user_index]["orders"][$i-1][$k]['id'], $inventory));
+					 }
+					 echo $total . " BGN";
+					 ?>
+				    </td>
+				</tr>
+			    </tbody>
+			</table>
 		    </div>
 		</div>
-	    <?php }?>
-	</div>
-    <?php } ?>
+	    </div>
+	<?php } ?>
+    </div>
 
 </div>
-
-
-

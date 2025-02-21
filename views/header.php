@@ -36,7 +36,7 @@ if(isset($_POST['dark-light-btn'])){
     <body class="d-flex flex-column min-vh-100">
 	<nav class="navbar navbar-expand-md">
 	    <div class="container">
-		<a href="/Non-bookstack/shirts_shop/index.php?page=login" class="navbar-brand"> TeniskaBG </a>
+		<a href="index.php?page=login" class="navbar-brand"> TeniskaBG </a>
 
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
 		    <span class="navbar-toggler-icon"></span>
@@ -65,10 +65,10 @@ if(isset($_POST['dark-light-btn'])){
 			
 			<?php if(!isset($_SESSION['uname'])){?>
 			    <li class="nav-item">
-				<a href="/Non-bookstack/shirts_shop/index.php?page=login" class="nav-link <?= $page==='login' ? 'active' : ''?>"> Login </a>
+				<a href="index.php?page=login" class="nav-link <?= $page==='login' ? 'active' : ''?>"> Login </a>
 			    </li>
 			    <li class="nav-item">
-				<a href="/Non-bookstack/shirts_shop/index.php?page=register" class="nav-link <?= $page==='register' ? 'active' : ''?>"> Register </a>
+				<a href="index.php?page=register" class="nav-link <?= $page==='register' ? 'active' : ''?>"> Register </a>
 			    </li>
 			<?php } ?>
 			<?php if(isset($_SESSION['uname'])){
@@ -78,14 +78,14 @@ if(isset($_POST['dark-light-btn'])){
 			    </li>
 			<?php }?>
 			<li class="nav-item">
-			    <a href="/Non-bookstack/shirts_shop/index.php?page=profile" class="nav-link <?= $page==='profile' ? 'active' : ''?>"> <i class="bi bi-person-lines-fill"></i> </a>
+			    <a href="index.php?page=profile" class="nav-link <?= $page==='profile' ? 'active' : ''?>"> <i class="bi bi-person-lines-fill"></i> </a>
 			</li>
 			<li class="nav-item">
-			    <a href="/Non-bookstack/shirts_shop/index.php?page=logout" class="nav-link"> <i class="bi bi-box-arrow-left"></i> </a>
+			    <a href="index.php?page=logout" class="nav-link"> <i class="bi bi-box-arrow-left"></i> </a>
 			</li>
 <?php } ?>
 <li class="nav-item">
-    <a href="/Non-bookstack/shirts_shop/index.php?page=shop" class="nav-link <?= $page==='shop' ? 'active' : ''?>"> Shop </a>
+    <a href="index.php?page=shop" class="nav-link <?= $page==='shop' ? 'active' : ''?>"> Shop </a>
 </li>
 
 

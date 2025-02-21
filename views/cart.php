@@ -37,7 +37,7 @@ if(isset($_COOKIE['cart'])){?>
     echo "<h5 class='m-3'> Total: $total BGN</h4>";
 
     ?>
-    <form action="/Non-bookstack/shirts_shop/index.php?page=shop" method="POST">
+    <form action="index.php?page=shop" method="POST">
       <button type="submit" name="cart_buy_btn" class="btn btn-outline-info m-2">Buy</button>
       <button type="submit" name="cart_empty_btn" class="btn btn-outline-secondary m-2">Empty Cart</button>
     </form>

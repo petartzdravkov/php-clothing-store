@@ -8,7 +8,7 @@ isset($_SESSION['uname']) ? $isLogged = true : $isLogged = false;
 //dark-light mode
 if(!isset($_COOKIE['dark-light'])){
     setcookie("dark-light", "dark");
-    header("Location: /Non-bookstack/shirts_shop/index.php?page=shop");
+    header("Location: index.php?page=shop");
 }
 
 

@@ -3,7 +3,7 @@
 function initializeFiles(){
     //users
     if(!file_exists("storage/users.json")){
-        $admin_profile = [["uname" => "admin", "pass" => password_hash('admin', PASSWORD_BCRYPT), "fname" => "Admin", "gender" => "male", "orders" => ["items" => []]]];
+        $admin_profile = [["uname" => "admin", "pass" => password_hash('admin', PASSWORD_BCRYPT), "fname" => "Admin", "gender" => "male", "orders" => [[[]]]]];
         file_put_contents("storage/users.json", json_encode($admin_profile));
     }
 
@@ -56,7 +56,7 @@ function showRegister(){
             if($isUnameTaken){
                 $error = "Username already exists";
             }else{
-                $users[] = ["uname" => $uname, "pass" => password_hash($pass, PASSWORD_BCRYPT), "fname" => $fname, "gender" => $gender];
+                $users[] = ["uname" => $uname, "pass" => password_hash($pass, PASSWORD_BCRYPT), "fname" => $fname, "gender" => $gender, "orders" => [[[]]]];
                 file_put_contents("storage/users.json", json_encode($users));
                 header("Location: /Non-bookstack/shirts_shop/index.php?page=login&reg=1");
             }
@@ -93,7 +93,7 @@ function showLogin(){
                     $_SESSION['uname'] = $user['uname'];
                     $_SESSION['fname'] = $user['fname'];
                     $_SESSION['gender'] = $user['gender'];
-                    header("Location: /Non-bookstack/shirts_shop/index.php?page=shop");
+                    header("Location: index.php?page=shop");
                     die();
                 }
             }
@@ -160,7 +160,7 @@ Congratulations! You order was successful!
                             setcookie("cart", json_encode($cart));			 
                             
                             //redirect to get cookie
-                            header("Location: /Non-bookstack/shirts_shop/index.php?page=shop&addcart=1");
+                            header("Location: index.php?page=shop&addcart=1");
 
                         }
                     }
@@ -195,7 +195,7 @@ Congratulations! You order was successful!
 	
 	//empty cart and redirect for message and to update cookies
         setcookie("cart");
-	header("Location: /Non-bookstack/shirts_shop/index.php?page=shop&bought=1");
+	header("Location: index.php?page=shop&bought=1");
     }
     if(isset($_GET['bought'])){
     	$success_msg = '
@@ -210,7 +210,7 @@ Congratulations! You order was successful!
     //empty cart
     if(isset($_POST["cart_empty_btn"])){
 	setcookie('cart');
-	header("Location: /Non-bookstack/shirts_shop/index.php?page=shop&emptycard=1");
+	header("Location: index.php?page=shop&emptycard=1");
     }
     if(isset($_GET['emptycard'])){
     	$success_msg = '
@@ -270,7 +270,7 @@ Added to cart.
 		    echo '<h6 class="card-subtitle mb-2 text-body-secondary"> Amount left: ' . $items["amount"] . '</h6>';
 		}
 		echo '<h6 class="card-subtitle mb-2 text-body-secondary"> Price: ' . $items["price"] . ' BGN</h6>
-<form method="POST" action="/Non-bookstack/shirts_shop/index.php?page=shop">
+<form method="POST" action="index.php?page=shop">
 <input type="number" name="' . $id . '_ordered" placeholder="1" min="1" max="' . $items["amount"]  . '" class="my-3 w-25"' . $disabled  . '>
 <input type="submit" name="buy_btn" value="Buy"  class="w-25 btn btn-outline-info p-1 mx-3"' . $disabled  . '>
 <input type="submit" name="cart_btn" value="To Cart"  class="w-25 btn btn-outline-secondary p-1"' . $disabled  . '>
@@ -291,7 +291,7 @@ Added to cart.
 		echo '<h6 class="card-subtitle mb-2 text-body-secondary"> Amount left: ' . $items["amount"] . '</h6>';
 	    }
             echo '<h6 class="card-subtitle mb-2 text-body-secondary"> Price: ' . $items["price"] . ' BGN</h6>
-<form method="POST" action="/Non-bookstack/shirts_shop/index.php?page=shop">
+<form method="POST" action="index.php?page=shop">
 <input type="number" name="' . $id . '_ordered" placeholder="1" min="1" max="' . $items["amount"]  . '" class="my-3 w-25"' . $disabled  . '>
 <input type="submit" name="buy_btn" value="Buy"  class="w-25"' . $disabled  . '>
 <input type="submit" name="cart_btn" value="To Cart"  class="w-25"' . $disabled  . '>
@@ -307,7 +307,7 @@ Added to cart.
 
 function logout(){
     session_destroy();
-    header('Location: /Non-bookstack/shirts_shop/index.php?page=login');
+    header('Location: index.php?page=login');
     die();
 }
 
@@ -315,7 +315,7 @@ function showProfile(){
 
     //redirect to login if no active session
     if(!isset($_SESSION["uname"])){
-        header("Location: /Non-bookstack/shirts_shop/index.php?page=login");
+        header("Location: index.php?page=login");
         die();
     }
     
@@ -354,9 +354,34 @@ function showProfile(){
                     $_SESSION['gender'] = htmlentities(trim($_POST["gender_replace"]));
                     $gender = $_SESSION['gender'];
                     file_put_contents("storage/users.json", json_encode($users));
+		    break;
                 }
             }
         }
+
+
+	//profile pic
+	if(!empty($file_tmp) && is_uploaded_file($file_tmp)){
+	    $uploaded_file = "";
+	    $file_tmp = $_FILES['profile_pic']['tmp_name'];
+	    $upload_dir = "uploads/";
+	    $file_name = $_FILES['profile_pic']['name'];
+	    $new_file_name = $uname . "_" . time() . "_" . $file_name;
+	    if(move_uploaded_file($file_tmp, $upload_dir . $new_file_name)){
+		$uploaded_file = "Successful upload!";
+		foreach($users as $key_user => $user){
+		    if($user["uname"] === $uname){
+			$users = json_decode(file_get_contents("storage/users.json"), true);
+			if(isset($users[$key_user]["profile_pic"])){
+			    unlink($users[$key_user]["profile_pic"]);
+			}
+			$users[$key_user]["profile_pic"] = $upload_dir . $new_file_name;
+			file_put_contents("storage/users.json", json_encode($users));
+			break;
+                    }
+		}
+	    }
+	}
     }
 
 
@@ -365,7 +390,7 @@ function showProfile(){
 	unset($users[$current_user_index]);
 	file_put_contents("storage/users.json", json_encode($users));
 	session_destroy();
-	header("Location: /Non-bookstack/shirts_shop/index.php?page=shop");
+	header("Location: index.php?page=shop");
 	die();
     }
 
